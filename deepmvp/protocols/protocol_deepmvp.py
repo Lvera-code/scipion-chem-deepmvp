@@ -41,6 +41,8 @@ from ..utils.parse_output import parse_site_predictions
 
 class ProtDeepMVPPrediction(EMProtocol):
     """
+    AI Generated:
+
     Predicts PTM candidate sites (acetylation, N-glycosylation,
     methylation, phosphorylation, sumoylation, ubiquitination -- 8
     residue-specific models covering 6 biological categories, see
