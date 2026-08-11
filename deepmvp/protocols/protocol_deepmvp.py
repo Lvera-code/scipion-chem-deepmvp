@@ -102,14 +102,11 @@ class ProtDeepMVPPrediction(EMProtocol):
         faFile = self._getExtraPath('inputSequence.fa')
         inpSeq.exportToFile(faFile)
 
-        # Rutas ABSOLUTAS obligatorias (bug real encontrado 2026-08-11 via
-        # 'scipion3 test' real): el subproceso corre con cwd=DeepMVP_HOME
-        # (ver runDeepMVP mas abajo), asi que una ruta relativa de
-        # self._getExtraPath() (relativa a la raiz del proyecto Scipion) se
-        # resuelve contra el cwd EQUIVOCADO -- mismo bug ya documentado y
-        # corregido en scipion-chem-netcleave (protocol_netcleave.py) para
-        # exactamente este mismo patron, que se me habia olvidado aplicar
-        # aqui. Confirmado real: 'FileNotFoundError' al leer el FASTA.
+        # Rutas ABSOLUTAS obligatorias: el subproceso corre con
+        # cwd=DeepMVP_HOME (ver runDeepMVP mas abajo), asi que una ruta
+        # relativa de self._getExtraPath() (relativa a la raiz del proyecto
+        # Scipion) se resolveria contra el cwd equivocado -- mismo patron ya
+        # documentado en scipion-chem-netcleave (protocol_netcleave.py).
         faFileAbs = os.path.abspath(faFile)
         resultDirAbs = os.path.abspath(self._getExtraPath('deepmvp_out'))
 

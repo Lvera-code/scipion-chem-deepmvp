@@ -81,9 +81,9 @@ class Plugin(pwchemPlugin):
         # pyteomics, shap==0.39.0) son exactamente lo que DeepMVP.py importa
         # en el camino de prediccion (verificado leyendo lib/PTModels.py).
         #
-        # Clone ANTES de crear el entorno conda (mismo bug real ya
-        # encontrado+corregido en netcleave/iapred/scannet/discotope/
-        # stackglyembed en el proyecto 1, ver netcleave/__init__.py:
+        # Clone ANTES de crear el entorno conda (mismo patron aplicado en
+        # netcleave/iapred/scannet/discotope/stackglyembed, ver
+        # netcleave/__init__.py:
         # 'InstallHelper.addCommand' -- y por tanto 'getCondaEnvCommand',
         # que lo usa internamente -- deja su propio marcador de finalizacion
         # DENTRO de 'packageHome'; crear el entorno antes de clonar deja ese
