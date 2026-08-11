@@ -4,18 +4,18 @@ CHANGES
 
 0.2.0
 =====
-- Protocolo real (``ProtDeepMVPPrediction``): FASTA -> sitios PTM candidatos
-  (una ``SequenceROI`` por sitio, ``_type``/``_scoreDeepmvp``/``_fpr``/
-  ``_passesThreshold``). Instalacion automatica del repo+entorno conda
-  (Python 3.7.10, TensorFlow 2.4.2); pesos pre-entrenados manuales
-  (``DEEPMVP_MODEL_DIR``, descarga no automatizable -- app Shiny, no enlace
-  directo). Test real con la secuencia de ejemplo del propio repo upstream
-  (Q5S007/LRRK2).
+- Real protocol (``ProtDeepMVPPrediction``): FASTA -> candidate PTM sites
+  (one ``SequenceROI`` per site, ``_type``/``_scoreDeepmvp``/``_fpr``/
+  ``_passesThreshold``). Automatic installation of the repo+conda
+  environment (Python 3.7.10, TensorFlow 2.4.2); manual pretrained weights
+  (``DEEPMVP_MODEL_DIR``, download cannot be automated -- Shiny app, no
+  direct link). Real test with the example sequence from the upstream
+  repo itself (Q5S007/LRRK2).
 
 0.1.0
 =====
-- Scaffolding inicial: estructura de plugin de Scipion generada siguiendo el
-  mismo patron que los plugins de BCell-Epitope-Prediction (un plugin por
-  herramienta). Sin logica de instalacion ni de protocolo todavia -- pendiente
-  de la validacion end-to-end del pipeline en Colab, ver STATUS.md del
-  proyecto ``PTM-Prediction``.
+- Initial scaffolding: Scipion plugin structure generated following the
+  same pattern as the BCell-Epitope-Prediction plugins (one plugin per
+  tool). No installation or protocol logic yet -- pending end-to-end
+  validation of the pipeline on Colab, see STATUS.md of the
+  ``PTM-Prediction`` project.

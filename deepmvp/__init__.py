@@ -36,30 +36,30 @@ from pwchem import Plugin as pwchemPlugin
 
 from .constants import DEEPMVP_DIC, MODEL_DOWNLOAD_URL, NOINSTALL_WARNING, UPSTREAM_URL
 
-_references = []  # DeepMVP no tiene una publicacion formal citable todavia (repo/README verificados, sin bibtex propio).
+_references = []  # DeepMVP does not have a formal citable publication yet (repo/README verified, no own bibtex).
 
 
 class Plugin(pwchemPlugin):
-    """DeepMVP (bzhanglab/DeepMVP, GPL-3.0) se instala clonando el repo
-    upstream y construyendo un entorno conda dedicado con su stack de
-    dependencias real (TensorFlow 2.4.2, Python 3.7.10 -- ver
-    environment.yml del repo real). Los PESOS pre-entrenados NO se instalan
-    automaticamente: http://DeepMVP.ptmax.org/ es una app Shiny (confirmado
-    via curl, no un enlace directo a archivo), asi que no hay forma real de
-    scriptear esa descarga -- mismo tipo de paso manual que NetMHCpan/
-    NetMHCIIpan en el proyecto 1 (aunque aqui no hay restriccion de
-    licencia, solo imposibilidad tecnica de automatizar la descarga).
-    DEEPMVP_MODEL_DIR debe apuntar, tras la descarga+descompresion manual, a
-    la carpeta que contiene las 8 subcarpetas de modelo especificas de
-    residuo. Ver README.rst para el paso a paso completo."""
+    """DeepMVP (bzhanglab/DeepMVP, GPL-3.0) is installed by cloning the
+    upstream repo and building a dedicated conda environment with its real
+    dependency stack (TensorFlow 2.4.2, Python 3.7.10 -- see the real repo's
+    environment.yml). The pretrained WEIGHTS are NOT installed
+    automatically: http://DeepMVP.ptmax.org/ is a Shiny app (confirmed via
+    curl, not a direct file link), so there is no real way to script that
+    download -- the same kind of manual step as NetMHCpan/NetMHCIIpan in
+    project 1 (although here there is no license restriction, only the
+    technical impossibility of automating the download).
+    DEEPMVP_MODEL_DIR must point, after the manual download+decompression,
+    to the folder containing the 8 residue-specific model subfolders. See
+    README.rst for the full step-by-step."""
 
     @classmethod
     def _defineVariables(cls):
         cls._defineEmVar(DEEPMVP_DIC['home'], cls.getEnvName(DEEPMVP_DIC))
         cls._defineVar(DEEPMVP_DIC['activation'], cls.getEnvActivationCommand(DEEPMVP_DIC))
-        # Vacio por defecto (mismo patron que NETMHCPAN_HOME en el proyecto
-        # 1): el usuario debe apuntarlo a la carpeta de pesos tras la
-        # descarga manual, no hay una ruta por defecto valida posible.
+        # Empty by default (same pattern as NETMHCPAN_HOME in project 1):
+        # the user must point it to the weights folder after the manual
+        # download, there is no valid default path possible.
         cls._defineVar(DEEPMVP_DIC['model_dir'], '')
 
     @classmethod
@@ -73,26 +73,26 @@ class Plugin(pwchemPlugin):
         installer = InstallHelper(DEEPMVP_DIC['name'], packageHome=home,
                                   packageVersion=DEEPMVP_DIC['version'])
 
-        # requirements.txt (verificado contra el archivo real del repo
-        # upstream) se usa tal cual, sin parchear -- a diferencia de
-        # StackGlyEmbed, este es el archivo de PREDICCION real (no uno de
-        # entrenamiento con pines invalidos), y sus 7 lineas
-        # (tensorflow==2.4.2, pandas, scikit-learn, matplotlib, biopython,
-        # pyteomics, shap==0.39.0) son exactamente lo que DeepMVP.py importa
-        # en el camino de prediccion (verificado leyendo lib/PTModels.py).
+        # requirements.txt (verified against the real file in the upstream
+        # repo) is used as-is, without patching -- unlike StackGlyEmbed,
+        # this is the real PREDICTION file (not a training one with invalid
+        # pins), and its 7 lines (tensorflow==2.4.2, pandas, scikit-learn,
+        # matplotlib, biopython, pyteomics, shap==0.39.0) are exactly what
+        # DeepMVP.py imports on the prediction path (verified by reading
+        # lib/PTModels.py).
         #
-        # Clone ANTES de crear el entorno conda (mismo patron aplicado en
-        # netcleave/iapred/scannet/discotope/stackglyembed, ver
+        # Clone BEFORE creating the conda environment (same pattern applied
+        # in netcleave/iapred/scannet/discotope/stackglyembed, see
         # netcleave/__init__.py:
-        # 'InstallHelper.addCommand' -- y por tanto 'getCondaEnvCommand',
-        # que lo usa internamente -- deja su propio marcador de finalizacion
-        # DENTRO de 'packageHome'; crear el entorno antes de clonar deja ese
-        # marcador en 'home' y bloquea el 'git clone' posterior, que exige
-        # un destino vacio o inexistente).
+        # 'InstallHelper.addCommand' -- and therefore 'getCondaEnvCommand',
+        # which uses it internally -- leaves its own completion marker
+        # INSIDE 'packageHome'; creating the environment before cloning
+        # would leave that marker in 'home' and block the subsequent
+        # 'git clone', which requires an empty or nonexistent destination).
         #
-        # pythonVersion='3.7' (no la version por defecto del resto de
-        # plugins de este proyecto): TensorFlow 2.4.2 exige Python<=3.8,
-        # confirmado en environment.yml del repo real ('python=3.7.10').
+        # pythonVersion='3.7' (not the default version used by the rest of
+        # this project's plugins): TensorFlow 2.4.2 requires Python<=3.8,
+        # confirmed in the real repo's environment.yml ('python=3.7.10').
         installer.addCommand(
             f"git clone --depth 1 {UPSTREAM_URL} {home}",
             'DEEPMVP_CLONED'
@@ -160,9 +160,10 @@ class Plugin(pwchemPlugin):
     def runDeepMVP(cls, protocol, args, cwd=None):
         activation = cls.getVar(DEEPMVP_DIC['activation'])
         scriptPath = cls.getDeepMVPScriptPath()
-        # MPLBACKEND=Agg (mismo motivo real documentado en
-        # PTM-Prediction/src/engines/deepmvp_engine.py): MPLBACKEND se
-        # heredaria del proceso padre si no se fuerza aqui, y un backend
-        # interactivo/inline no existe en el entorno conda aislado.
+        # MPLBACKEND=Agg (same real reason documented in
+        # PTM-Prediction/src/engines/deepmvp_engine.py): MPLBACKEND would be
+        # inherited from the parent process if not forced here, and an
+        # interactive/inline backend does not exist in the isolated conda
+        # environment.
         fullProgram = f'MPLBACKEND=Agg {activation} && python {scriptPath}'
         protocol.runJob(fullProgram, args, env=cls.getEnviron(), cwd=cwd)

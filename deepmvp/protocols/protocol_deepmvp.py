@@ -41,8 +41,6 @@ from ..utils.parse_output import parse_site_predictions
 
 class ProtDeepMVPPrediction(EMProtocol):
     """
-    AI Generated:
-
     Predicts PTM candidate sites (acetylation, N-glycosylation,
     methylation, phosphorylation, sumoylation, ubiquitination -- 8
     residue-specific models covering 6 biological categories, see
@@ -102,11 +100,11 @@ class ProtDeepMVPPrediction(EMProtocol):
         faFile = self._getExtraPath('inputSequence.fa')
         inpSeq.exportToFile(faFile)
 
-        # Rutas ABSOLUTAS obligatorias: el subproceso corre con
-        # cwd=DeepMVP_HOME (ver runDeepMVP mas abajo), asi que una ruta
-        # relativa de self._getExtraPath() (relativa a la raiz del proyecto
-        # Scipion) se resolveria contra el cwd equivocado -- mismo patron ya
-        # documentado en scipion-chem-netcleave (protocol_netcleave.py).
+        # ABSOLUTE paths are mandatory: the subprocess runs with
+        # cwd=DeepMVP_HOME (see runDeepMVP below), so a relative path from
+        # self._getExtraPath() (relative to the Scipion project root) would
+        # resolve against the wrong cwd -- same pattern already documented
+        # in scipion-chem-netcleave (protocol_netcleave.py).
         faFileAbs = os.path.abspath(faFile)
         resultDirAbs = os.path.abspath(self._getExtraPath('deepmvp_out'))
 
@@ -134,13 +132,14 @@ class ProtDeepMVPPrediction(EMProtocol):
             seqROI._fpr = Float(float(row['fpr']))
             seqROI._passesThreshold = Boolean(float(row['fpr']) <= maxFpr)
             seqROI._residueWt = String(residue)
-            # Convencion de todo el proyecto (ver
+            # Project-wide convention (see
             # scipion-chem-epitope-construct/.../protocol_epitope_construct.py:66-75):
-            # cualquier protocolo de prediccion debe exponer '_meanScore' para que
-            # protocolos de ranking/consenso genericos (p.ej. una futura
-            # ProtCombineScoresSeqROI) puedan ordenar sin conocer el nombre
-            # especifico de cada motor. y_pred (no 'fpr', que es un umbral, no un
-            # score de confianza) es la metrica real de confianza aqui.
+            # any prediction protocol must expose '_meanScore' so that generic
+            # ranking/consensus protocols (e.g. a future
+            # ProtCombineScoresSeqROI) can order results without knowing the
+            # specific name of each engine. y_pred (not 'fpr', which is a
+            # threshold, not a confidence score) is the real confidence
+            # metric here.
             seqROI._meanScore = Float(float(row['y_pred']))
             outROIs.append(seqROI)
 

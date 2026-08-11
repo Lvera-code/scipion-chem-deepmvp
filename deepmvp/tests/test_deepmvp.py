@@ -31,11 +31,11 @@ from ..protocols import ProtDeepMVPPrediction
 
 
 class TestDeepMVPPrediction(BaseTest):
-    # Q5S007 (LRRK2 human), la misma accession del ejemplo real que trae el
-    # repo upstream (DeepMVP/example/Q5S007.fasta) -- reusar un fixture que
-    # el propio autor del tool ya valida es mas fiable que elegir una
-    # secuencia nueva sin ningun precedente conocido de funcionar con este
-    # modelo.
+    # Q5S007 (LRRK2 human), the same accession as the real example shipped
+    # with the upstream repo (DeepMVP/example/Q5S007.fasta) -- reusing a
+    # fixture already validated by the tool's own author is more reliable
+    # than picking a new sequence with no known precedent of working with
+    # this model.
     NAME = 'Q5S007'
     DESCRIPTION = 'LRRK2 human (DeepMVP upstream example)'
     AMINOACIDSSEQ = (

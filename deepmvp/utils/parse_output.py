@@ -23,12 +23,12 @@
 # *
 # **************************************************************************
 """
-Parseo de 'site_prediction.tsv' (salida real de DeepMVP en modo 'predict
--t 2', prefix hardcodeado en el repo upstream -- ver constants.py). Logica
-vendorizada de forma independiente (misma politica que StackGlyEmbed/
-NetCleave en el proyecto 1: este plugin no importa el proyecto hermano
-PTM-Prediction, cada uno mantiene su propia copia minima de lo que
-necesita) a partir del mismo contrato ya validado end-to-end en
+Parsing of 'site_prediction.tsv' (real DeepMVP output in 'predict -t 2'
+mode, prefix hardcoded in the upstream repo -- see constants.py). Logic
+vendorized independently (same policy as StackGlyEmbed/NetCleave in
+project 1: this plugin does not import the sibling PTM-Prediction project,
+each one keeps its own minimal copy of what it needs) from the same
+contract already validated end-to-end in
 PTM-Prediction/src/engines/deepmvp_engine.py.
 """
 
@@ -43,20 +43,20 @@ class DeepMVPOutputError(Exception):
 
 
 def parse_site_predictions(resultDir):
-    """Lee '<resultDir>/site_prediction.tsv' y devuelve una lista de dicts
-    con OUTPUT_COLUMNS (protein/aa/pos/x/y_pred/fpr/ptm), una entrada por
-    sitio PTM candidato reportado por DeepMVP.
+    """Reads '<resultDir>/site_prediction.tsv' and returns a list of dicts
+    with OUTPUT_COLUMNS (protein/aa/pos/x/y_pred/fpr/ptm), one entry per
+    candidate PTM site reported by DeepMVP.
 
     Raises:
-        DeepMVPOutputError: si el archivo no existe o le faltan columnas
-            esperadas (p.ej. una version mas nueva de DeepMVP cambio su
-            formato de salida).
+        DeepMVPOutputError: if the file does not exist or is missing
+            expected columns (e.g. a newer DeepMVP version changed its
+            output format).
     """
     tsvPath = os.path.join(resultDir, SITE_PREDICTION_FILENAME)
     if not os.path.isfile(tsvPath):
         raise DeepMVPOutputError(
-            f"DeepMVP no genero '{SITE_PREDICTION_FILENAME}' en '{resultDir}'. El subproceso "
-            "reporto exit code 0 pero el archivo de salida esperado no existe."
+            f"DeepMVP did not generate '{SITE_PREDICTION_FILENAME}' in '{resultDir}'. The subprocess "
+            "reported exit code 0 but the expected output file does not exist."
         )
 
     with open(tsvPath, newline='') as fh:
@@ -64,8 +64,8 @@ def parse_site_predictions(resultDir):
         missing = [c for c in OUTPUT_COLUMNS if c not in (reader.fieldnames or [])]
         if missing:
             raise DeepMVPOutputError(
-                f"'{tsvPath}' no tiene las columnas esperadas {OUTPUT_COLUMNS} (faltan: {missing}, "
-                f"columnas reales: {reader.fieldnames}). Puede que una version mas nueva de DeepMVP "
-                "haya cambiado su formato de salida."
+                f"'{tsvPath}' does not have the expected columns {OUTPUT_COLUMNS} (missing: {missing}, "
+                f"actual columns: {reader.fieldnames}). A newer DeepMVP version may have "
+                "changed its output format."
             )
         return [{col: row[col] for col in OUTPUT_COLUMNS} for row in reader]

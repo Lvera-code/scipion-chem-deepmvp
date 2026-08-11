@@ -3,16 +3,17 @@ DeepMVP Scipion plugin
 ================================
 
 Scipion framework plugin wrapping DeepMVP (Nature Methods, 2025) --
-motor central de prediccion de PTM (Camino FASTA, 6 tipos), consenso opcional con DeepPTMPred en Camino PDB.
+core PTM prediction engine (FASTA path, 6 types), with optional consensus
+with DeepPTMPred on the PDB path.
 
-``ProtDeepMVPPrediction`` porta la logica ya validada end-to-end en el
-pipeline standalone (``PTM-Prediction/src/engines/deepmvp_engine.py``).
+``ProtDeepMVPPrediction`` ports the logic already validated end-to-end in
+the standalone pipeline (``PTM-Prediction/src/engines/deepmvp_engine.py``).
 
-Repo original: https://github.com/bzhanglab/DeepMVP
+Original repo: https://github.com/bzhanglab/DeepMVP
 
-Cita: doi.org/10.1038/s41592-025-02797-x
+Citation: doi.org/10.1038/s41592-025-02797-x
 
-**Licencia de DeepMVP (upstream)**: GPL-3.0, declarada en el LICENSE del repo original (bzhanglab/DeepMVP) -- verificada contra el archivo real, no asumida.
+**DeepMVP license (upstream)**: GPL-3.0, declared in the LICENSE of the original repo (bzhanglab/DeepMVP) -- verified against the actual file, not assumed.
 
 ===================
 Install this plugin
@@ -27,12 +28,12 @@ Install this plugin
             scipion3 installp -p . --devel
             scipion3 installb DeepMVP
 
-El repo y el entorno conda (Python 3.7.10, TensorFlow 2.4.2) se instalan
-automaticamente. Los **pesos pre-entrenados NO** -- ``http://DeepMVP.ptmax.org/``
-es una app Shiny, no un enlace de descarga directa, asi que no se puede
-scriptear. Descargalos manualmente, descomprime el ``.tar.gz`` y apunta
-``DEEPMVP_MODEL_DIR`` (en ``scipion.conf``) a la carpeta resultante (debe
-contener las 8 subcarpetas de modelo: ``acetylation_k``, ``glycosylation_n``,
+The repo and the conda environment (Python 3.7.10, TensorFlow 2.4.2) are
+installed automatically. The **pretrained weights are NOT** -- ``http://DeepMVP.ptmax.org/``
+is a Shiny app, not a direct-download link, so it cannot be scripted.
+Download them manually, decompress the ``.tar.gz``, and point
+``DEEPMVP_MODEL_DIR`` (in ``scipion.conf``) to the resulting folder (it must
+contain the 8 model subfolders: ``acetylation_k``, ``glycosylation_n``,
 ``methylation_k``, ``methylation_r``, ``phosphorylation_st``,
 ``phosphorylation_y``, ``sumoylation_k``, ``ubiquitination_k``).
 
