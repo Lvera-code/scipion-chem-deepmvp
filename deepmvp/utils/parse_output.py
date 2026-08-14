@@ -24,12 +24,10 @@
 # **************************************************************************
 """
 Parsing of 'site_prediction.tsv' (real DeepMVP output in 'predict -t 2'
-mode, prefix hardcoded in the upstream repo -- see constants.py). Logic
-vendorized independently (same policy as StackGlyEmbed/NetCleave in
-project 1: this plugin does not import the sibling PTM-Prediction project,
-each one keeps its own minimal copy of what it needs) from the same
-contract already validated end-to-end in
-PTM-Prediction/src/engines/deepmvp_engine.py.
+mode, prefix hardcoded in the upstream repo -- see constants.py). Each
+plugin in this project keeps its own minimal copy of this kind of parsing
+logic (same policy as StackGlyEmbed/NetCleave) rather than a shared
+dependency.
 """
 
 import csv

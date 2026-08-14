@@ -6,8 +6,8 @@ Scipion framework plugin wrapping DeepMVP (Nature Methods, 2025) --
 core PTM prediction engine (FASTA path, 6 types), with optional consensus
 with DeepPTMPred on the PDB path.
 
-``ProtDeepMVPPrediction`` ports the logic already validated end-to-end in
-the standalone pipeline (``PTM-Prediction/src/engines/deepmvp_engine.py``).
+``ProtDeepMVPPrediction`` wraps a local DeepMVP installation directly, no
+vendored/reimplemented prediction logic.
 
 Original repo: https://github.com/bzhanglab/DeepMVP
 

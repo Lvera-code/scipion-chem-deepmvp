@@ -40,8 +40,9 @@ UPSTREAM_URL = 'https://github.com/bzhanglab/DeepMVP'
 # not expose any GPU/device flag -- unlike 'train' mode (line ~40,
 # '-gpu'/'--gpu_n'), which this plugin does not use. TensorFlow decides
 # CPU/GPU on its own based on what it detects available; there is no real
-# toggle to expose in the protocol (same criterion applied in project 1 to
-# NetCleave/IApred/ScanNet, whose real CLIs also have no GPU flag).
+# toggle to expose in the protocol (same criterion applied to
+# scipion-chem-netcleave/-iapred/-scannet, whose real CLIs also have no
+# GPU flag).
 GPU_REQUIRED = False
 
 # DeepMVP license (upstream): GPL-3.0, declared in the LICENSE of the original repo (bzhanglab/DeepMVP) -- verified against the real file, not assumed.
@@ -50,8 +51,9 @@ GPU_REQUIRED = False
 # http://DeepMVP.ptmax.org/ is a Shiny app (confirmed via 'curl -sIL',
 # 'X-Powered-By: Shiny Server'), not a direct link to a .tar.gz -- the same
 # kind of real blocker that motivated the manual-installation pattern for
-# NetMHCpan/NetMHCIIpan in project 1 (although there is no academic license
-# involved here, only the impossibility of scripting the download).
+# scipion-chem-netmhcpan's NetMHCpan/NetMHCIIpan weights (although there is
+# no academic license involved here, only the impossibility of scripting
+# the download).
 # DEEPMVP_MODEL_DIR must point, after the manual download+decompression, to
 # the folder with the 8 model subfolders (acetylation_k, glycosylation_n,
 # methylation_k, methylation_r, phosphorylation_st, phosphorylation_y,
@@ -60,10 +62,7 @@ MODEL_DOWNLOAD_URL = 'https://deepmvp.ptmax.org/'
 
 # Real columns of 'site_prediction.tsv' (fixed filename, confirmed by
 # reading lib/PTModels.py::ptm_prediction_for_multiple_ptms in the real
-# repo -- prefix hardcoded to 'site_prediction'). Also verified against
-# PTM-Prediction/src/engines/deepmvp_engine.py::OUTPUT_COLUMNS (an engine
-# already validated end-to-end in the standalone pipeline), not guessed
-# again.
+# repo -- prefix hardcoded to 'site_prediction'), not guessed.
 SITE_PREDICTION_FILENAME = 'site_prediction.tsv'
 OUTPUT_COLUMNS = ['protein', 'aa', 'pos', 'x', 'y_pred', 'fpr', 'ptm']
 

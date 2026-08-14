@@ -15,7 +15,5 @@ CHANGES
 0.1.0
 =====
 - Initial scaffolding: Scipion plugin structure generated following the
-  same pattern as the BCell-Epitope-Prediction plugins (one plugin per
-  tool). No installation or protocol logic yet -- pending end-to-end
-  validation of the pipeline on Colab, see STATUS.md of the
-  ``PTM-Prediction`` project.
+  same one-plugin-per-tool pattern used across this project's other
+  plugins. No installation or protocol logic yet.

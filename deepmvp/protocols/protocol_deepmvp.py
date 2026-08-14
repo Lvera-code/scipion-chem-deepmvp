@@ -48,9 +48,8 @@ class ProtDeepMVPPrediction(EMProtocol):
     residue-specific models covering 6 biological categories, see
     DeepMVP's own README) directly from a protein sequence, using a local
     DeepMVP (bzhanglab/DeepMVP) installation. No structure needed -- this
-    is the sole PTM-site engine of the FASTA-only path of the standalone
-    PTM-Prediction pipeline (``pipeline.py::run_fase2_fasta_motor``), and
-    one of two engines (together with DeepPTMPred) that a downstream
+    is the sequence-only PTM-site engine, usable even without a structure,
+    and one of two engines (together with DeepPTMPred) that a downstream
     ``scipion-chem-ptmannotation`` protocol fuses into consensus when a
     structure is also available.
 

@@ -46,9 +46,10 @@ class Plugin(pwchemPlugin):
     environment.yml). The pretrained WEIGHTS are NOT installed
     automatically: http://DeepMVP.ptmax.org/ is a Shiny app (confirmed via
     curl, not a direct file link), so there is no real way to script that
-    download -- the same kind of manual step as NetMHCpan/NetMHCIIpan in
-    project 1 (although here there is no license restriction, only the
-    technical impossibility of automating the download).
+    download -- the same kind of manual step as scipion-chem-netmhcpan's
+    NetMHCpan/NetMHCIIpan weights (although here there is no license
+    restriction, only the technical impossibility of automating the
+    download).
     DEEPMVP_MODEL_DIR must point, after the manual download+decompression,
     to the folder containing the 8 residue-specific model subfolders. See
     README.rst for the full step-by-step."""
@@ -57,9 +58,10 @@ class Plugin(pwchemPlugin):
     def _defineVariables(cls):
         cls._defineEmVar(DEEPMVP_DIC['home'], cls.getEnvName(DEEPMVP_DIC))
         cls._defineVar(DEEPMVP_DIC['activation'], cls.getEnvActivationCommand(DEEPMVP_DIC))
-        # Empty by default (same pattern as NETMHCPAN_HOME in project 1):
-        # the user must point it to the weights folder after the manual
-        # download, there is no valid default path possible.
+        # Empty by default (same pattern as scipion-chem-netmhcpan's
+        # NETMHCPAN_HOME): the user must point it to the weights folder
+        # after the manual download, there is no valid default path
+        # possible.
         cls._defineVar(DEEPMVP_DIC['model_dir'], '')
 
     @classmethod
@@ -160,10 +162,8 @@ class Plugin(pwchemPlugin):
     def runDeepMVP(cls, protocol, args, cwd=None):
         activation = cls.getVar(DEEPMVP_DIC['activation'])
         scriptPath = cls.getDeepMVPScriptPath()
-        # MPLBACKEND=Agg (same real reason documented in
-        # PTM-Prediction/src/engines/deepmvp_engine.py): MPLBACKEND would be
-        # inherited from the parent process if not forced here, and an
-        # interactive/inline backend does not exist in the isolated conda
-        # environment.
+        # MPLBACKEND=Agg: would otherwise be inherited from the parent
+        # process, and an interactive/inline backend does not exist in the
+        # isolated conda environment.
         fullProgram = f'MPLBACKEND=Agg {activation} && python {scriptPath}'
         protocol.runJob(fullProgram, args, env=cls.getEnviron(), cwd=cwd)
