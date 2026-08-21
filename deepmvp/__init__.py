@@ -106,18 +106,23 @@ class Plugin(pwchemPlugin):
         ).getCondaEnvCommand(
             DEEPMVP_DIC['name'], binaryVersion=DEEPMVP_DIC['version'], pythonVersion='3.7'
         ).addCommand(
-            # cudatoolkit=11.0/cudnn=8.0.4: TF 2.4.2's own documented
+            # cudatoolkit=11.0/cudnn=8.0.5: TF 2.4.2's own documented
             # compatible CUDA/cuDNN pair (tensorflow.org build config
             # history) -- TF's pip wheel already supports GPU, it just
-            # needs these shared libraries findable at runtime (confirmed
-            # missing today: real 'libcudart.so.11.0' not found warning in
-            # a test run on this GPU-less machine). Only installed when a
-            # GPU is actually present (checked via 'nvidia-smi') -- on a
-            # machine with none, this is a no-op and behavior is
-            # unchanged from before this GPU work.
+            # needs these shared libraries findable at runtime. Only
+            # installed when a GPU is actually present (checked via
+            # 'nvidia-smi').
+            # TWO real bugs found+fixed via an actual install run on a
+            # real GPU (Colab, Tesla T4, 2026-08-21): (1) neither package
+            # exists in the 'defaults' channel at all (real
+            # 'PackagesNotFoundInChannelsError') -- '-c conda-forge'
+            # added; (2) 'cudnn=8.0.4' does not exist as a real build in
+            # ANY channel (confirmed via 'conda search') -- the real
+            # closest/matching build is '8.0.5.39', pinned here as
+            # '8.0.5'. Both installed successfully together with this fix.
             f"if command -v nvidia-smi > /dev/null 2>&1; then "
             f"{cls.getEnvActivationCommand(DEEPMVP_DIC)} && "
-            f"conda install -y cudatoolkit=11.0 cudnn=8.0.4; fi",
+            f"conda install -y -c conda-forge cudatoolkit=11.0 cudnn=8.0.5; fi",
             'DEEPMVP_GPU_LIBS_CHECKED'
         ).addCommand(
             f"{cls.getEnvActivationCommand(DEEPMVP_DIC)} && "

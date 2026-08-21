@@ -2,6 +2,18 @@
 CHANGES
 =========
 
+0.4.1
+=====
+- Fixed two real bugs in the GPU install branch found via an actual
+  end-to-end fresh install + real prediction on a Colab GPU session
+  (Tesla T4, 2026-08-21): (1) ``cudatoolkit``/``cudnn`` are not available
+  in the ``defaults`` channel at all (added ``-c conda-forge``); (2)
+  ``cudnn=8.0.4`` does not exist as a real build in any channel (the real
+  closest match is ``8.0.5``). Verified after the fix: TensorFlow
+  correctly loads ``libcudart.so.11.0``/``libcudnn.so.8`` and detects the
+  real GPU, and a real DeepMVP prediction ran successfully end-to-end on
+  GPU.
+
 0.4.0
 =====
 - GPU support: ``USE_GPU``/``GPU_LIST`` hidden params added to
