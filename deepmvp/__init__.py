@@ -113,8 +113,8 @@ class Plugin(pwchemPlugin):
             # installed when a GPU is actually present (checked via
             # 'nvidia-smi').
             # TWO real bugs found+fixed via an actual install run on a
-            # real GPU (Colab, Tesla T4, 2026-08-21): (1) neither package
-            # exists in the 'defaults' channel at all (real
+            # real GPU machine: (1) neither package exists in the
+            # 'defaults' channel at all (real
             # 'PackagesNotFoundInChannelsError') -- '-c conda-forge'
             # added; (2) 'cudnn=8.0.4' does not exist as a real build in
             # ANY channel (confirmed via 'conda search') -- the real
@@ -214,7 +214,7 @@ class Plugin(pwchemPlugin):
         # runner calls) -- a plain dict fails with a real
         # AttributeError, confirmed by an actual failed test run.
         # CUDA_VISIBLE_DEVICES='' vs unset/'0' verified for real against
-        # TensorFlow on a real GPU (Colab, Tesla T4, 2026-08-21):
+        # TensorFlow on a real GPU machine:
         # 'tf.config.list_physical_devices("GPU")' returns [] when hidden,
         # the real device when not -- this is not just a theoretical lever.
         env = Environ(os.environ)
