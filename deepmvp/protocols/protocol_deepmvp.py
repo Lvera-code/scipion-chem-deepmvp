@@ -74,6 +74,16 @@ class ProtDeepMVPPrediction(EMProtocol):
     _label = 'deepmvp ptm prediction'
 
     def _defineParams(self, form):
+        # TensorFlow decides GPU/CPU on its own (no CLI flag in DeepMVP.py's
+        # predict mode, see constants.py) -- these hidden params only
+        # control whether the CUDA_VISIBLE_DEVICES env var restricts or
+        # hides GPUs before TF's own auto-detection runs (see runDeepMVP).
+        form.addHidden(params.USE_GPU, params.BooleanParam, default=True,
+                       label='Use GPU: ',
+                       help='Whether to use GPU or not. (Unable to choose the GPU id).')
+        form.addHidden(params.GPU_LIST, params.StringParam, default='0', label='Choose GPU IDs',
+                       help='Add a list of GPU devices that can be used')
+
         form.addSection(label='Input')
         form.addParam('inputSequence', params.PointerParam, pointerClass='Sequence',
                        label='Input sequence: ',

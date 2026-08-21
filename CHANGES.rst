@@ -2,6 +2,18 @@
 CHANGES
 =========
 
+0.4.0
+=====
+- GPU support: ``USE_GPU``/``GPU_LIST`` hidden params added to
+  ``ProtDeepMVPPrediction`` (same convention as scipion-chem-tmbed/
+  -discotope), wired to ``CUDA_VISIBLE_DEVICES`` in ``runDeepMVP`` (no
+  native CLI flag exists in DeepMVP.py -- TensorFlow decides GPU/CPU on
+  its own, this is the real lever on that decision). Install now also
+  installs ``cudatoolkit=11.0``/``cudnn=8.0.4`` (TF 2.4.2's own documented
+  compatible pair) when a GPU is detected at install time -- unchanged
+  (no-op) on a machine with none, which is the only branch verified on
+  this dev machine.
+
 0.3.0
 =====
 - Pretrained weights are now auto-downloaded and extracted at install time

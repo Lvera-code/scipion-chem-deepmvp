@@ -30,6 +30,7 @@ DeepMVP installation.
 import os
 import subprocess
 
+from pyworkflow.utils import Environ
 from scipion.install.funcs import InstallHelper
 
 from pwchem import Plugin as pwchemPlugin
@@ -104,6 +105,20 @@ class Plugin(pwchemPlugin):
             'DEEPMVP_CLONED'
         ).getCondaEnvCommand(
             DEEPMVP_DIC['name'], binaryVersion=DEEPMVP_DIC['version'], pythonVersion='3.7'
+        ).addCommand(
+            # cudatoolkit=11.0/cudnn=8.0.4: TF 2.4.2's own documented
+            # compatible CUDA/cuDNN pair (tensorflow.org build config
+            # history) -- TF's pip wheel already supports GPU, it just
+            # needs these shared libraries findable at runtime (confirmed
+            # missing today: real 'libcudart.so.11.0' not found warning in
+            # a test run on this GPU-less machine). Only installed when a
+            # GPU is actually present (checked via 'nvidia-smi') -- on a
+            # machine with none, this is a no-op and behavior is
+            # unchanged from before this GPU work.
+            f"if command -v nvidia-smi > /dev/null 2>&1; then "
+            f"{cls.getEnvActivationCommand(DEEPMVP_DIC)} && "
+            f"conda install -y cudatoolkit=11.0 cudnn=8.0.4; fi",
+            'DEEPMVP_GPU_LIBS_CHECKED'
         ).addCommand(
             f"{cls.getEnvActivationCommand(DEEPMVP_DIC)} && "
             f"cd {home} && pip install -r requirements.txt",
@@ -182,4 +197,17 @@ class Plugin(pwchemPlugin):
         # process, and an interactive/inline backend does not exist in the
         # isolated conda environment.
         fullProgram = f'MPLBACKEND=Agg {activation} && python {scriptPath}'
-        protocol.runJob(fullProgram, args, env=cls.getEnviron(), cwd=cwd)
+        # CUDA_VISIBLE_DEVICES: DeepMVP.py has no GPU/CPU CLI flag of its
+        # own (TF decides based on what it detects) -- this is the actual
+        # lever the useGpu/gpuList hidden params (see protocol_deepmvp.py)
+        # have on TF's auto-detection. 'cls.getEnviron()' is not used here:
+        # it returns None (never overridden anywhere in this project),
+        # equivalent to inheriting os.environ unchanged -- building a real
+        # copy here is additive, not a behavior change for anything else.
+        # Must be a real 'pyworkflow.utils.Environ' (a dict subclass with
+        # extra methods like 'getPrepend()' that pyworkflow's own job
+        # runner calls) -- a plain dict fails with a real
+        # AttributeError, confirmed by an actual failed test run.
+        env = Environ(os.environ)
+        env['CUDA_VISIBLE_DEVICES'] = protocol.gpuList.get() if protocol.useGpu.get() else ''
+        protocol.runJob(fullProgram, args, env=env, cwd=cwd)

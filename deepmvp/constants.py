@@ -38,8 +38,10 @@ UPSTREAM_URL = 'https://github.com/bzhanglab/DeepMVP'
 # Confirmed by reading DeepMVP.py ('predict' mode, line ~117-138): it does
 # not expose any GPU/device flag -- unlike 'train' mode (line ~40,
 # '-gpu'/'--gpu_n'), which this plugin does not use. TensorFlow decides
-# CPU/GPU on its own based on what it detects available; there is no real
-# toggle to expose in the protocol (same criterion applied to
+# CPU/GPU on its own based on what it detects available -- the protocol's
+# USE_GPU/GPU_LIST hidden params (see protocol_deepmvp.py) act on that
+# decision indirectly, via CUDA_VISIBLE_DEVICES (see runDeepMVP in
+# __init__.py), not a real CLI flag (same criterion applied to
 # scipion-chem-netcleave/-iapred/-scannet, whose real CLIs also have no
 # GPU flag).
 GPU_REQUIRED = False
