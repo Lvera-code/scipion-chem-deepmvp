@@ -208,6 +208,10 @@ class Plugin(pwchemPlugin):
         # extra methods like 'getPrepend()' that pyworkflow's own job
         # runner calls) -- a plain dict fails with a real
         # AttributeError, confirmed by an actual failed test run.
+        # CUDA_VISIBLE_DEVICES='' vs unset/'0' verified for real against
+        # TensorFlow on a real GPU (Colab, Tesla T4, 2026-08-21):
+        # 'tf.config.list_physical_devices("GPU")' returns [] when hidden,
+        # the real device when not -- this is not just a theoretical lever.
         env = Environ(os.environ)
         env['CUDA_VISIBLE_DEVICES'] = protocol.gpuList.get() if protocol.useGpu.get() else ''
         protocol.runJob(fullProgram, args, env=env, cwd=cwd)

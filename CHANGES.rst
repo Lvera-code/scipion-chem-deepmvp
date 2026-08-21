@@ -11,8 +11,9 @@ CHANGES
   its own, this is the real lever on that decision). Install now also
   installs ``cudatoolkit=11.0``/``cudnn=8.0.4`` (TF 2.4.2's own documented
   compatible pair) when a GPU is detected at install time -- unchanged
-  (no-op) on a machine with none, which is the only branch verified on
-  this dev machine.
+  (no-op) on a machine with none. The ``CUDA_VISIBLE_DEVICES`` lever
+  itself was verified for real against TensorFlow on a Colab GPU session
+  (Tesla T4): hides/exposes the GPU exactly as expected.
 
 0.3.0
 =====
