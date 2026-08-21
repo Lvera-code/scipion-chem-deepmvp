@@ -33,7 +33,6 @@ DEEPMVP_DIC = {
     'model_dir': 'DEEPMVP_MODEL_DIR',
 }
 
-READ_URL = 'https://github.com/Lvera-code/scipion-chem-deepmvp'
 UPSTREAM_URL = 'https://github.com/bzhanglab/DeepMVP'
 
 # Confirmed by reading DeepMVP.py ('predict' mode, line ~117-138): it does
@@ -47,18 +46,19 @@ GPU_REQUIRED = False
 
 # DeepMVP license (upstream): GPL-3.0, declared in the LICENSE of the original repo (bzhanglab/DeepMVP) -- verified against the real file, not assumed.
 
-# The pretrained weights CANNOT be downloaded in a scriptable way:
-# http://DeepMVP.ptmax.org/ is a Shiny app (confirmed via 'curl -sIL',
-# 'X-Powered-By: Shiny Server'), not a direct link to a .tar.gz -- the same
-# kind of real blocker that motivated the manual-installation pattern for
-# scipion-chem-netmhcpan's NetMHCpan/NetMHCIIpan weights (although there is
-# no academic license involved here, only the impossibility of scripting
-# the download).
-# DEEPMVP_MODEL_DIR must point, after the manual download+decompression, to
-# the folder with the 8 model subfolders (acetylation_k, glycosylation_n,
-# methylation_k, methylation_r, phosphorylation_st, phosphorylation_y,
-# sumoylation_k, ubiquitination_k) -- see README.rst.
-MODEL_DOWNLOAD_URL = 'https://deepmvp.ptmax.org/'
+# The Shiny app page (https://deepmvp.ptmax.org/) is not itself a direct
+# link, but its download button's real target IS a direct, scriptable
+# file (found by inspecting the button element, not by curl'ing the page
+# itself -- confirmed with 'curl -sIL': 301 to the https URL below, then
+# 200, 'content-type: application/gzip', ~1.5GB). Installed automatically
+# now (see addDeepMVPPackage in __init__.py) into a 'modelFiles/' folder
+# created at install time; DEEPMVP_MODEL_DIR defaults to
+# '<DEEPMVP_HOME>/modelFiles/models' (the real top-level folder inside the
+# tarball, confirmed via 'tar tzf', containing the 8 model subfolders:
+# acetylation_k, glycosylation_n, methylation_k, methylation_r,
+# phosphorylation_st, phosphorylation_y, sumoylation_k, ubiquitination_k).
+# Still overridable via scipion.conf if a user wants to point elsewhere.
+MODEL_DOWNLOAD_URL = 'https://deepmvp.ptmax.org/download/models.tar.gz'
 
 # Real columns of 'site_prediction.tsv' (fixed filename, confirmed by
 # reading lib/PTModels.py::ptm_prediction_for_multiple_ptms in the real
@@ -71,7 +71,7 @@ DEFAULT_MAX_FPR = 0.05
 NOINSTALL_WARNING = (
     "DeepMVP is not installed correctly. Check that the repo has been cloned "
     "(DEEPMVP_HOME) and that DEEPMVP_MODEL_DIR points to a folder with the "
-    f"pretrained weights, downloaded manually from {MODEL_DOWNLOAD_URL} (not "
-    "scriptable: it is a Shiny app, not a direct link). See README.rst - "
-    "Installation."
+    f"pretrained weights (auto-downloaded from {MODEL_DOWNLOAD_URL} at install "
+    "time into '<DEEPMVP_HOME>/modelFiles/models' -- re-run 'scipion3 installb "
+    "deepmvp' if that download failed). See README.rst - Installation."
 )

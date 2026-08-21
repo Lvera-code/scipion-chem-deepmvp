@@ -43,25 +43,21 @@ class Plugin(pwchemPlugin):
     """DeepMVP (bzhanglab/DeepMVP, GPL-3.0) is installed by cloning the
     upstream repo and building a dedicated conda environment with its real
     dependency stack (TensorFlow 2.4.2, Python 3.7.10 -- see the real repo's
-    environment.yml). The pretrained WEIGHTS are NOT installed
-    automatically: http://DeepMVP.ptmax.org/ is a Shiny app (confirmed via
-    curl, not a direct file link), so there is no real way to script that
-    download -- the same kind of manual step as scipion-chem-netmhcpan's
-    NetMHCpan/NetMHCIIpan weights (although here there is no license
-    restriction, only the technical impossibility of automating the
-    download).
-    DEEPMVP_MODEL_DIR must point, after the manual download+decompression,
-    to the folder containing the 8 residue-specific model subfolders. See
-    README.rst for the full step-by-step."""
+    environment.yml). The pretrained weights are downloaded automatically
+    too: although https://deepmvp.ptmax.org/ itself is a Shiny app (not a
+    direct file link), its download button's real target IS a direct,
+    scriptable file (see MODEL_DOWNLOAD_URL in constants.py), extracted
+    into ``<DEEPMVP_HOME>/modelFiles/models``. See README.rst for details."""
 
     @classmethod
     def _defineVariables(cls):
         cls._defineEmVar(DEEPMVP_DIC['home'], cls.getEnvName(DEEPMVP_DIC))
         cls._defineVar(DEEPMVP_DIC['activation'], cls.getEnvActivationCommand(DEEPMVP_DIC))
-        # Empty by default (same pattern as scipion-chem-netmhcpan's
-        # NETMHCPAN_HOME): the user must point it to the weights folder
-        # after the manual download, there is no valid default path
-        # possible.
+        # Empty by default: 'getModelDir()' below falls back to where
+        # addDeepMVPPackage auto-downloads+extracts the weights
+        # ('<DEEPMVP_HOME>/modelFiles/models') when this is unset -- still
+        # overridable via scipion.conf if a user wants to point elsewhere
+        # (e.g. a weights folder shared across machines).
         cls._defineVar(DEEPMVP_DIC['model_dir'], '')
 
     @classmethod
@@ -95,6 +91,14 @@ class Plugin(pwchemPlugin):
         # pythonVersion='3.7' (not the default version used by the rest of
         # this project's plugins): TensorFlow 2.4.2 requires Python<=3.8,
         # confirmed in the real repo's environment.yml ('python=3.7.10').
+        # Weights auto-download: MODEL_DOWNLOAD_URL is the real direct file
+        # URL behind the Shiny app's download button (see constants.py),
+        # ~1.5GB, extracted into a 'modelFiles/' folder created here so
+        # DEEPMVP_MODEL_DIR needs no manual scipion.conf entry (see
+        # getModelDir()). '-C {home}/modelFiles' (not the default cwd):
+        # the tarball's own top-level entry is 'models/', so the resulting
+        # path is '<home>/modelFiles/models', matching MODEL_DOWNLOAD_URL's
+        # docstring above.
         installer.addCommand(
             f"git clone --depth 1 {UPSTREAM_URL} {home}",
             'DEEPMVP_CLONED'
@@ -104,7 +108,13 @@ class Plugin(pwchemPlugin):
             f"{cls.getEnvActivationCommand(DEEPMVP_DIC)} && "
             f"cd {home} && pip install -r requirements.txt",
             'DEEPMVP_INSTALLED'
-        ).addPackage(env, dependencies=['conda', 'git'], default=default)
+        ).addCommand(
+            f"mkdir -p {home}/modelFiles && "
+            f"curl -fsSL -o {home}/modelFiles/models.tar.gz {MODEL_DOWNLOAD_URL} && "
+            f"tar -xzf {home}/modelFiles/models.tar.gz -C {home}/modelFiles && "
+            f"rm -f {home}/modelFiles/models.tar.gz",
+            'DEEPMVP_MODELS_DOWNLOADED'
+        ).addPackage(env, dependencies=['conda', 'git', 'curl'], default=default)
 
     @classmethod
     def validateInstallation(cls):
@@ -121,10 +131,11 @@ class Plugin(pwchemPlugin):
         modelDir = cls.getModelDir()
         if not modelDir or not os.path.isdir(modelDir) or not any(os.scandir(modelDir)):
             errors.append(
-                f"DEEPMVP_MODEL_DIR ('{modelDir}') is empty or not set -- download the pretrained "
-                f"weights manually from {MODEL_DOWNLOAD_URL} (a Shiny app, not a direct-download "
-                "link -- cannot be scripted), decompress the .tar.gz, and point DEEPMVP_MODEL_DIR "
-                "at the resulting folder (must contain the 8 residue-specific model subfolders)."
+                f"DEEPMVP_MODEL_DIR ('{modelDir}') is empty or not set -- it should have been "
+                f"auto-downloaded from {MODEL_DOWNLOAD_URL} at install time. Re-run "
+                "'scipion3 installb deepmvp' or, if that keeps failing, download it manually and "
+                "point DEEPMVP_MODEL_DIR at the resulting folder (must contain the 8 "
+                "residue-specific model subfolders)."
             )
 
         if errors:
@@ -154,7 +165,12 @@ class Plugin(pwchemPlugin):
 
     @classmethod
     def getModelDir(cls):
-        return cls.getVar(DEEPMVP_DIC['model_dir'])
+        configured = cls.getVar(DEEPMVP_DIC['model_dir'])
+        if configured:
+            return configured
+        # Falls back to where addDeepMVPPackage auto-downloads+extracts the
+        # weights when DEEPMVP_MODEL_DIR is unset in scipion.conf.
+        return os.path.join(cls.getDeepMVPDir(), 'modelFiles', 'models')
 
     # ---------------------------------- Protocol functions-----------------------
 

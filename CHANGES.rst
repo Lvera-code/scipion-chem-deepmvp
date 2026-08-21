@@ -2,6 +2,14 @@
 CHANGES
 =========
 
+0.3.0
+=====
+- Pretrained weights are now auto-downloaded and extracted at install time
+  (the Shiny app's download button has a real direct file URL behind it)
+  into ``<DEEPMVP_HOME>/modelFiles/models`` -- no manual download/
+  ``scipion.conf`` entry needed anymore. Removed unused ``READ_URL``
+  constant.
+
 0.2.0
 =====
 - Real protocol (``ProtDeepMVPPrediction``): FASTA -> candidate PTM sites

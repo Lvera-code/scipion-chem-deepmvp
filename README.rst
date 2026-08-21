@@ -28,14 +28,15 @@ Install this plugin
             scipion3 installp -p . --devel
             scipion3 installb DeepMVP
 
-The repo and the conda environment (Python 3.7.10, TensorFlow 2.4.2) are
-installed automatically. The **pretrained weights are NOT** -- ``http://DeepMVP.ptmax.org/``
-is a Shiny app, not a direct-download link, so it cannot be scripted.
-Download them manually, decompress the ``.tar.gz``, and point
-``DEEPMVP_MODEL_DIR`` (in ``scipion.conf``) to the resulting folder (it must
-contain the 8 model subfolders: ``acetylation_k``, ``glycosylation_n``,
+The repo, the conda environment (Python 3.7.10, TensorFlow 2.4.2) and the
+**pretrained weights** are all installed automatically: the weights are
+downloaded from the real direct file behind ``https://deepmvp.ptmax.org/``'s
+download button and extracted into ``<DEEPMVP_HOME>/modelFiles/models``
+(the 8 model subfolders: ``acetylation_k``, ``glycosylation_n``,
 ``methylation_k``, ``methylation_r``, ``phosphorylation_st``,
-``phosphorylation_y``, ``sumoylation_k``, ``ubiquitination_k``).
+``phosphorylation_y``, ``sumoylation_k``, ``ubiquitination_k``). Only set
+``DEEPMVP_MODEL_DIR`` in ``scipion.conf`` if you want to point at a
+different weights folder instead.
 
 .. code-block::
 
